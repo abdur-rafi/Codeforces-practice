@@ -1,0 +1,135 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+#define PII pair<int,int>
+class segTree
+{
+    pair<int,int> *segarr;
+    int n;
+    PII constructTreeUtil(int arr[],int si,int as,int ae);
+    PII queryUtil(int qs,int qe,int ss,int se,int si);
+    void updateUtil(int i,int si,int ss,int se,int val,int arr[]);
+public:
+    segTree(int arr[],int N);
+    void update(int i, int val,int arr[]);
+    PII query(int as, int ae);
+};
+segTree::segTree(int arr[],int N)
+{
+    n = N;
+    int x = (int)(ceil(log2(n)));
+    int s = 2*(int)pow(2,x) - 1;
+    segarr = new pair<int,int>[s];
+    constructTreeUtil(arr,0,0,n-1);
+}
+PII segTree::constructTreeUtil(int arr[],int si,int as,int ae)
+{
+    if(as == ae)
+    {
+        segarr[si].first = arr[as];
+        segarr[si].second = as;
+        return segarr[si];
+    }
+    int mid = (as+ae) >> 1;
+    auto l = constructTreeUtil(arr,2*si+1,as,mid);
+    auto r = constructTreeUtil(arr,2*si+2,mid+1,ae);
+   // int h,index;
+    if(l.first < r.first)
+       segarr[si] = l;
+    else
+        segarr[si] = r;
+    return segarr[si];
+}
+PII segTree::query(int qs,int qe)
+{
+    return queryUtil(qs,qe,0,n-1,0);
+}
+PII segTree::queryUtil(int qs,int qe,int ss,int se,int si)
+{
+    if(qs <= ss && qe >= se)
+        return segarr[si];
+    if(se < qs || ss > qe )
+    {
+        PII p;
+        p.first = INT_MAX;
+        p.second = -1;
+        return p;
+    }
+    int m = (ss+se) >> 1;
+    auto l = queryUtil(qs,qe,ss,m,2*si+1);
+    auto r = queryUtil(qs,qe,m+1,se,2*si+2);
+    if(l.first < r.first)
+        return l;
+    return r;
+}
+void segTree::update(int i,int val,int arr[])
+{
+    return updateUtil(i,0,0,n-1,val,arr);
+}
+void segTree::updateUtil(int i,int si,int ss,int se,int val,int arr[])
+{
+    if(ss == se)
+    {
+        arr[i] = val;
+        segarr[si].first = val;
+        return ;
+    }
+    int mid = (ss+se) >> 1;
+    if(ss <= i && i <= mid)
+        updateUtil(i,2*si+1,ss,mid,val,arr);
+    else
+        updateUtil(i,2*si+2,mid+1,se,val,arr);
+    auto l = segarr[2*si+1];
+    auto r = segarr[2*si+2];
+    if(l.first < r.first)
+    {
+        segarr[si] = l;
+    }
+    else
+        segarr[si] = r;
+
+}
+int b_search(int val,int arr[],int n)
+{
+    int i = 0;
+    int j = n-1;
+    int m;
+    while(i <= j)
+    {
+        m = (i+j) >> 1;
+        if(arr[m] >= val)
+            j = m-1;
+        else
+            i = m+1;
+    }
+    return j+1;
+}
+int main()
+{
+    int n;
+    cin >> n;
+    int arr1[n],arr2[n],BSarr[n];
+    for(int i = 0;i < n;++i)
+        cin >> arr1[i];
+    for(int i = 0; i < n;++i)
+    {
+        cin >> arr2[i];
+        BSarr[i] = arr2[i];
+    }
+    sort(arr2,arr2+n);
+    sort(BSarr,BSarr+n);
+    segTree s(arr2,n);
+    for(int i = 0; i < n;++i)
+    {
+        int rem = n-arr1[i];
+        int index = b_search(rem,BSarr,n);
+        auto p = s.query(index,n-1);
+        if(p.first == INT_MAX)
+            p = s.query(0,index-1);
+        arr1[i] = (arr1[i] + p.first) % n;
+        s.update(p.second,INT_MAX,arr2);
+    }
+    for(int i = 0; i < n;++i)
+        cout << arr1[i] << ' ';
+    return 0;
+}

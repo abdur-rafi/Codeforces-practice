@@ -1,0 +1,33 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+int main()
+{
+    int n;
+    cin >> n;
+    string s;
+    cin >> ws;
+    cin >> s;
+    int arr[10];
+    for(int i = 1; i <= 9;++i)
+        cin >> arr[i];
+    arr[0] = 0;
+    bool d = false;
+    for(auto p = s.begin(); p != s.end();++p)
+    {
+        int a = (*p)-'0';
+        int b = arr[a];
+        if(b >= a)
+        {
+            (*p) = b+'0';
+            d = true;
+        }
+        else if(d)
+            break;
+    }
+    cout << s << '\n';
+   // cout << "Hello world!" << endl;
+    return 0;
+}

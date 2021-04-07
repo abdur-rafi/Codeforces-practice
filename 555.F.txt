@@ -1,0 +1,98 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+#define PII pair<int,int>
+#define ll long long
+#define loop(x,n,a) for(int x =a; x < n;++x)
+#define loop_rev(x,n,a) for(int x = n-1; x >= a;--x)
+#define inp(x) cin >> x
+#define VI vector<int>
+#define V vector
+int h[200001];
+int hPair[200001];
+int main()
+{
+    int n;
+    inp(n);
+    loop(i,n,0)
+    {
+        int a;
+        inp(a);
+        h[a]++;
+    }
+    loop(i,n,0)
+    {
+        hPair[i] = h[i]/2;
+    }
+    int hi = 0;
+    int c = 0;
+    int bi = 1;
+    int ei = n-1;
+    int hbi = 0;
+    int hei = 0;
+    loop(i,200001,1)
+    {
+        if(h[i] >= 2)
+            c += h[i];
+        else
+        {
+            if(h[i] == 1)
+            {
+                 ++c;
+                 ei = i;
+            }
+            else
+                ei = i-1;
+            if(bi > 0 && h[bi-1])
+            {
+                ++c;
+                --bi;
+            }
+            if(c > hi)
+            {
+                hi = c;
+                hbi = bi;
+                hei = ei;
+            }
+            c = 0;
+            bi = i+1;
+        }
+
+    }
+    if(c)
+    {
+        if(bi > 0 && h[bi-1])
+        {
+            ++c;
+            --bi;
+        }
+        if(c > hi)
+        {
+            hi = c;
+            hbi = bi;
+            hei = 200000;
+        }
+    }
+    cout << hi << '\n';
+    for(int i = hbi; i <= hei;++i)
+    {
+        if(h[i] == 1)
+        {
+            cout << i << ' ';
+            --h[i];
+        }
+        else
+        {
+            while(h[i] > 1)
+            {
+                cout << i << ' ';
+                --h[i];
+            }
+        }
+    }
+    for(int i = hei; i >= hbi;--i)
+        if(h[i])
+            cout << i << ' ';
+   // cout << "Hello world!" << endl;
+    return 0;
+}

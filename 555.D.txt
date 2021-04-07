@@ -1,0 +1,82 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define PII pair<int,int>
+#define ll long long
+#define loop(x,n,a) for(int x =a; x < n;++x)
+#define loop_rev(x,n,a) for(int x = n-1; x >= a;--x)
+#define inp(x) cin >> x
+#define VI vector<int>
+#define V vector
+void NO()
+{
+    cout << "NO\n";
+    return;
+}
+void YES(ll arr[],ll k)
+{
+    cout << "YES\n";
+    loop(i,k,0)
+        cout << arr[i] << ' ';
+}
+ll minll(ll a, ll b)
+{
+    return (a<b)?a:b;
+}
+ll maxll(ll a, ll b)
+{
+    return (a<b)?b:a;
+}
+int main()
+{
+    ll n,k;
+    cin >> n >> k;
+    ll sum = (k*(k+1))/2;
+    if(sum > n)
+    {
+        NO();
+        return 0;
+    }
+    ll arr[k];
+    loop(i,k,0)
+        arr[i] = i+1;
+    ll rem = n-sum;
+    ll div = rem/k;
+    loop(i,k,0)
+        arr[i] += div;
+    rem = rem%k;
+    if(div != 0)
+    {
+        arr[k-1] += rem;
+        YES(arr,k);
+        return 0;
+    }
+    while(rem)
+    {
+        ll a = rem;
+        for(int i = k-1;i >= 1;--i)
+        {
+            ll x = (2*arr[i-1])-arr[i];
+          //  cout << "X : " << x << '\n';
+            ll y = minll(x,rem);
+          //  cout << "Y : " << y << '\n';
+            arr[i] += y;
+            rem -= y;
+            if(!rem)
+                break;
+        }
+        ll x = maxll(0,arr[1]-1-arr[0]);
+        arr[0] += x;
+        rem -= x;
+        ll b = rem;
+        if(a == b)
+            break;
+    }
+    if(rem)
+    {
+        NO();
+        return 0;
+    }
+    YES(arr,k);
+    return 0;
+
+}

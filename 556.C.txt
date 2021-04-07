@@ -1,0 +1,88 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+const int N = 1000000;
+vector<int> prime;
+bool isprime[N+10];
+void sieve()
+{
+    for(int i = 1; i<= N;++i)
+        isprime[i] = true;
+    for(int p = 2; p*p <= N;++p)
+    {
+        if(isprime[p])
+        {
+            for(int j = p*p; j <= N; j += p)
+            {
+                isprime[j] = false;
+            }
+        }
+    }
+    for(int i = 2; i <= N;++i)
+    {
+        if(isprime[i])
+            prime.push_back(i);
+    }
+}
+int main()
+{
+    int n;
+    int fre[3];
+    fre[1] = 0;
+    fre[2] = 0;
+    cin >> n;
+    for(int i = 0; i < n;++i)
+    {
+        int a;
+        cin >> a;
+        fre[a]++;
+    }
+    sieve();
+    vector<pair<int,int>> res;
+    int sum = 0;
+    if(fre[1] == n)
+    {
+        for(int i = 0; i < fre[1];++i)
+            cout << 1 << ' ';
+        return 0;
+    }
+    if(fre[2] == n)
+    {
+        for(int i = 0; i < fre[2];++i)
+            cout << 2 << ' ';
+        return 0;
+    }
+    for(auto p = prime.begin(); p != prime.end();++p)
+    {
+        int pr = *p;
+        int rem = pr-sum;
+        int m = min(fre[2],rem/2);
+        if(m)
+            res.push_back({2,m});
+        sum += 2*m;
+        fre[2] -= m;
+        rem -= 2*m;
+        m = min(fre[1],rem);
+        if(m)
+        res.push_back({1,m});
+        sum += m;
+        fre[1] -= m;
+    //    cout <<fre[1] << ' ' << fre[2] << ' ' << m <<  '\n';
+     //   getchar();
+        if(fre[1] == 0 && fre[2] == 0)
+            break;
+    }
+    if(fre[1])
+        res.push_back({1,fre[1]});
+    if(fre[2])
+        res.push_back({2,fre[2]});
+    for(int i = 0; i < res.size();++i)
+    {
+        auto p = res[i];
+        for(int j = 0; j < p.second;++j)
+            cout << p.first << ' ';
+    }
+    cout << '\n';
+  //  cout << "Hello world!" << endl;
+    return 0;
+}
