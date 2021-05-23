@@ -10,6 +10,24 @@ int MOD = (1e9) + 7;
 const int MAX = 300000+100;
 
 
+bool check(vector<int> fre, int gap){
+	int fFre = fre[0];
+	int i = 0;
+	while(i + 1 < fre.size() && fre[i+1] == fFre){
+		i++;
+		--gap;
+	}
+	++i;
+	// printf("gap: %d\n",gap);
+	ll sum = 0;
+	while(i < fre.size()){
+		sum += fre[i++];
+	}
+	ll a = gap;
+	a *= fFre - 1;
+	return sum >= a;
+}
+
 int main(){
 	int t = 1;
 	scanf("%d",&t);
@@ -26,51 +44,18 @@ int main(){
 		}
 		sort(fr.begin(),fr.end());
 		reverse(fr.begin(),fr.end());
-		vector<int> length;
-		int minus = 0;
-		for(int i=fr.size()-1;i>=0;--i){
-			int f = fr[i] - minus;
-			minus = fr[i];
-			int sz = fr.size();
-			loop(i,f,0) length.push_back(sz);
-			fr.pop_back();
+		// for(auto v: fr) printf("%d\n",v );
+		int i = 0, j = n, mid = 0;
+		while(i <= j){
+			mid = (i + j) >> 1;
+			if(check(fr, mid)){
+				i = mid + 1;
+			}
+			else{
+				j = mid - 1;
+			}
 		}
 
-		sort(length.begin(),length.end());
-
-		int mn = length[1] - 1;
-
-		priority_queue<int> pq;
-		for(auto len : length) pq.push(len-1);
-
-		int sz = length.size();
-		if(sz == 2){
-			printf("%d\n",length[1]-1 );
-			continue;
-		}
-
-		// printf("length\n");
-		// for(auto len : length){
-		// 	printf("%d\n",len );
-		// }
-
-		int last = 1;
-		int mnn = 1e9;
-		loop(i,sz-1,0){
-
-			int mx = pq.top();
-			// printf("mx : %d\n",mx );
-			if((mx / 2) <= (length[i+1]-1)) break;
-			pq.pop();
-			pq.push(mx / 2);
-			pq.push((mx / 2) + mx % 2);
-			mnn = min(mnn,(mx/2));
-			++last;
-
-		}
-		mn = length[last]-1;
-		mn = min(mn,mnn);
-		printf("%d\n",mn );
-
+		printf("%d\n",i - 1 );
 	}
 }
